@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  container_a:
+    build: ./app_a
+    container_name: container_a
+    ports:
+      - "8000:8000"
+    depends_on:
+      - container_b
+    networks:
+      - mynetwork
+
+  container_b:
+    build: ./app_b
+    container_name: container_b
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+      POSTGRES_HOST: postgres
+    networks:
+      - mynetwork
+
+
+networks:
+  mynetwork:
+    driver: bridge
